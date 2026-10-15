@@ -1,0 +1,24 @@
+name: Checks
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:8.0
+        ports: ["27017:27017"]
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand(\"ping\").ok'"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e '.[dev]'
+      - run: python -m playwright install --with-deps chromium
+      - run: ruff check jarvis tests scripts
+      - run: ruff format --check jarvis tests scripts
+      - run: pytest -q
+        env:
+          JARVIS_TEST_MONGODB_URI: mongodb://127.0.0.1:27017

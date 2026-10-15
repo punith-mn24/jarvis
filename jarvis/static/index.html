@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#070c15" />
+    <meta
+      name="description"
+      content="Jarvis personal agent workspace. Plan, act, verify."
+    />
+    <title>Jarvis · Agent workspace</title>
+    <link rel="icon" href="/static/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Jarvis home"
+        ><span class="brand-mark">j<span>•</span></span
+        >jarvis<span class="brand-period">.</span></a
+      >
+      <div class="workspace">
+        <span class="avatar">P</span>
+        <div>Personal workspace<small>LOCAL AGENT / v0.2</small></div>
+        <span class="workspace-dot"></span>
+      </div>
+      <p class="nav-label">WORKSPACE</p>
+      <nav aria-label="Main navigation">
+        <button data-view="workspace" class="nav-item active">
+          <span>◈</span> Command center
+        </button>
+        <button data-view="history" class="nav-item">
+          <span>◷</span> Task history
+          <span id="history-count" class="count">0</span>
+        </button>
+        <button data-view="connections" class="nav-item">
+          <span>⊞</span> Connections
+        </button>
+        <button data-view="devices" class="nav-item">
+          <span>▣</span> My devices
+        </button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sandbox-label"><span></span> LOCAL AI WORKSPACE</div>
+        <p>Ollama thinks locally.<br />Connected actions. Verified outcomes.</p>
+        <button id="lock-button" class="lock-button">
+          Lock workspace <span>↗</span>
+        </button>
+      </div>
+    </aside>
+    <div class="shell">
+      <header class="topbar">
+        <div>
+          <span class="breadcrumb">Workspace</span><span class="slash">/</span
+          ><span id="page-label">Command center</span>
+        </div>
+        <div class="topbar-right">
+          <span id="sync-status" class="sync"><i></i>Connecting</span
+          ><span class="profile">P</span>
+        </div>
+      </header>
+      <main>
+        <section id="workspace-view" class="view">
+          <div class="page-heading">
+            <div>
+              <div class="eyebrow">
+                PERSONAL INTELLIGENCE / ONLINE WORKSPACE
+              </div>
+              <h1>Your intent.<br /><span>Set in motion.</span></h1>
+              <p>One command. Connected apps. Outcomes you can inspect.</p>
+            </div>
+            <div class="orbit" aria-hidden="true">
+              <div class="orbit-ring"></div>
+              <div class="orbit-ring second"></div>
+              <div class="orbit-core">j<span>•</span></div>
+              <span class="orbit-dot one"></span
+              ><span class="orbit-dot two"></span
+              ><span class="orbit-star">✧</span>
+            </div>
+          </div>
+          <form id="goal-form" class="composer">
+            <div class="composer-title">
+              <span class="spark">✧</span
+              ><label for="goal">Enter your mission</label
+              ><select id="task-mode" aria-label="Task execution mode">
+                <option value="live">Live agent</option>
+                <option value="sandbox">Sandbox demo</option>
+              </select>
+            </div>
+            <textarea
+              id="goal"
+              placeholder="Find a black T-shirt on Amazon India, size M, under ₹1,000 and add it to my cart…"
+              rows="2"
+              maxlength="2000"
+              required
+              minlength="3"
+            ></textarea>
+            <div class="composer-bottom">
+              <label class="fault-picker" id="fault-picker" hidden
+                ><span>Test a failure</span
+                ><select id="failure-mode" aria-label="Failure to inject">
+                  <option value="none">None · happy path</option>
+                  <option value="transient">Rate limit · retry</option>
+                  <option value="auth">Authorization denied</option>
+                  <option value="silent">Silent write failure</option>
+                  <option value="wrong_data">Incorrect saved data</option>
+                </select></label
+              ><button id="create-button" class="primary" type="submit">
+                Launch task <span>↗</span>
+              </button>
+            </div>
+          </form>
+          <div class="demo-note" id="mode-note">
+            <span>ⓘ</span> Gmail, WhatsApp, Amazon India and local notes. Review
+            messages and exact cart items before Jarvis acts.
+          </div>
+          <div id="runtime-banner" class="info-banner" role="status">
+            <span id="runtime-text">Checking local intelligence…</span
+            ><progress
+              id="model-progress"
+              max="100"
+              value="0"
+              hidden
+              aria-label="Model download progress"
+            ></progress
+            ><button id="install-model" class="secondary" type="button" hidden>
+              Download / resume model
+            </button>
+          </div>
+          <div class="capability-grid" id="live-capabilities">
+            <button class="capability" data-example="email">
+              <span class="capability-icon">↗</span
+              ><span class="capability-index">01 / COMMUNICATE</span
+              ><strong>Send an email</strong
+              ><span>Gmail in Brave · draft, approve, verify</span>
+            </button>
+            <button class="capability" data-example="whatsapp">
+              <span class="capability-icon">◌</span
+              ><span class="capability-index">02 / CONNECT</span
+              ><strong>Message someone</strong
+              ><span>WhatsApp in Firefox · linked session</span>
+            </button>
+            <button class="capability" data-example="amazon">
+              <span class="capability-icon">⌑</span
+              ><span class="capability-index">03 / DISCOVER</span
+              ><strong>Find your next fit</strong
+              ><span>Amazon India · search to cart</span>
+            </button>
+          </div>
+          <div class="scenario-grid" id="sandbox-scenarios" hidden>
+            <button class="scenario" data-scenario="daily_brief">
+              <span class="scenario-icon orange">☀</span
+              ><strong>Make room for your day</strong
+              ><span>Inbox → brief → calendar → Slack</span
+              ><span class="scenario-arrow">↗</span>
+            </button>
+            <button class="scenario" data-scenario="meeting">
+              <span class="scenario-icon blue">▦</span
+              ><strong>Get everyone together</strong
+              ><span>Calendar → email → Slack</span
+              ><span class="scenario-arrow">↗</span>
+            </button>
+            <button class="scenario" data-scenario="notes">
+              <span class="scenario-icon green">▤</span
+              ><strong>Keep the project moving</strong
+              ><span>Notes → review reminder</span
+              ><span class="scenario-arrow">↗</span>
+            </button>
+          </div>
+          <div class="section-heading">
+            <h2>Mission activity <span id="task-count">0</span></h2>
+            <button id="show-history" class="text-button">
+              View all tasks ↗
+            </button>
+          </div>
+          <div class="metrics">
+            <div>
+              <span class="metric-icon">◈</span>
+              <div>
+                <strong id="metric-active">0</strong><span>In progress</span>
+              </div>
+            </div>
+            <div>
+              <span class="metric-icon">✓</span>
+              <div>
+                <strong id="metric-verified">0</strong
+                ><span>Verified tasks</span>
+              </div>
+            </div>
+            <div>
+              <span class="metric-icon amber">!</span>
+              <div>
+                <strong id="metric-attention">0</strong
+                ><span>Need your attention</span>
+              </div>
+            </div>
+          </div>
+          <div id="task-list" class="task-list"></div>
+          <div class="trust-line">
+            <span>✓ Independent verification</span
+            ><span>◉ You approve outgoing messages</span
+            ><span>↻ Shared across your devices</span>
+          </div>
+        </section>
+        <section id="history-view" class="view" hidden>
+          <div class="subpage-heading">
+            <div class="eyebrow">THE COMPLETE PICTURE</div>
+            <h1>Task history</h1>
+            <p>Plans, progress, and outcomes. Nothing hidden.</p>
+          </div>
+          <label class="search-label" for="history-search"
+            >Search loaded tasks</label
+          ><input
+            id="history-search"
+            type="search"
+            placeholder="Search by goal or status…"
+          />
+          <div id="history-list" class="task-list"></div>
+          <button id="load-more" class="secondary" hidden>
+            Load older tasks
+          </button>
+        </section>
+        <section id="connections-view" class="view" hidden>
+          <div class="subpage-heading">
+            <div class="eyebrow">YOUR TOOLKIT</div>
+            <h1>Connections</h1>
+            <p>Connect your accounts. Keep intelligence on your machine.</p>
+          </div>
+          <div class="info-banner">
+            WhatsApp opens only in Firefox. Gmail opens only in Brave. Sign in
+            in the dedicated browser windows; Jarvis checks provider state after
+            each action.
+          </div>
+          <div id="connections-list" class="connection-grid"></div>
+          <div class="connection-card connection-form">
+            <h2>Gmail in Brave</h2>
+            <p>
+              Open Gmail in Brave, sign in to the sending account, then verify
+              the session here. Jarvis uses a dedicated Brave profile and sends
+              through Gmail’s web interface.
+            </p>
+            <button class="secondary" type="button" data-connect="gmail">
+              1. Open Gmail in Brave ↗
+            </button>
+            <button id="verify-gmail" class="primary" type="button">
+              2. Verify Gmail session
+            </button>
+            <p id="gmail-result" role="status"></p>
+          </div>
+        </section>
+        <section id="devices-view" class="view" hidden>
+          <div class="subpage-heading">
+            <div class="eyebrow">PICK UP WHERE YOU LEFT OFF</div>
+            <h1>My devices</h1>
+            <p>
+              Open this workspace on another browser to share task progress.
+            </p>
+          </div>
+          <div class="info-banner">
+            Browser sessions share server state. Remote access requires a
+            reachable HTTPS server and the same workspace token. The laptop
+            filesystem agent is not implemented yet.
+          </div>
+          <div id="devices-list" class="task-list"></div>
+        </section>
+        <footer>
+          <span
+            >JARVIS <span class="footer-dot">/</span> PLAN. ACT. VERIFY.</span
+          ><a href="/docs" target="_blank" rel="noopener">API reference ↗</a>
+        </footer>
+      </main>
+    </div>
+    <div id="drawer-backdrop" hidden></div>
+    <aside id="task-drawer" aria-label="Task details" hidden>
+      <div class="drawer-top">
+        <span>TASK DETAILS</span
+        ><button
+          id="close-drawer"
+          class="icon-button"
+          aria-label="Close task details"
+        >
+          ×
+        </button>
+      </div>
+      <div id="task-detail"></div>
+    </aside>
+    <dialog id="auth-dialog">
+      <form id="auth-form">
+        <div class="auth-logo">j<span>•</span></div>
+        <div class="eyebrow">YOUR PERSONAL WORKSPACE</div>
+        <h2>Welcome to Jarvis.</h2>
+        <p>
+          Enter the access token from your project’s <code>.env</code> file to
+          open the workspace.
+        </p>
+        <label for="access-token">Workspace access token</label
+        ><input
+          id="access-token"
+          type="password"
+          autocomplete="current-password"
+          required
+          minlength="24"
+          placeholder="JARVIS_ACCESS_TOKEN"
+        />
+        <p id="auth-error" class="error-text" role="alert"></p>
+        <button class="primary" type="submit">
+          Open workspace <span>↗</span></button
+        ><small>The token stays in this browser tab’s session.</small>
+      </form>
+    </dialog>
+    <div id="toast" role="status" hidden></div>
+  </body>
+</html>
